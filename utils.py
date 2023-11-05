@@ -27,6 +27,28 @@ def _create_heawood():
     return nx.adjacency_matrix(nx.heawood_graph())
 
 
+def _create_mcgee():
+
+    cicle = nx.cycle_graph(24)
+
+    edges_dict = {0: (0, 12),
+                  1: (1, 8),
+                  2: (2, 18),
+                  3: (3, 15),
+                  4: (4, 11),
+                  5: (5, 22),
+                  6: (6, 18),
+                  7: (7, 14),
+                  8: (9, 21),
+                  9: (10, 17),
+                  10: (13, 20),
+                  11: (16, 23)}
+
+    cicle.add_edges_from(edges_dict)
+
+    return nx.adjacency_matrix(cicle)
+
+
 def _create_ring(order: int):
 
     cicle = nx.cycle_graph((order/2).astype(int))

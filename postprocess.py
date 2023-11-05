@@ -1,11 +1,11 @@
 import pickle
 
-with open('mcts_10_14.14_temp.pkl', 'rb') as file:
+with open('mcts_10_4.18_temp.pkl', 'rb') as file:
     mcts = pickle.load(file)
 
 from graph_tool.all import *
 
-terminal = mcts.s0_prop[65]
+terminal = mcts.s0_prop[183]
 
 print("Terminal child. State Id: {}/{}/{}".format(terminal.get_id,
                                                   terminal.get_scores, terminal.get_visits))

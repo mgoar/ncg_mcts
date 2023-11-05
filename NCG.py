@@ -117,3 +117,6 @@ class NCG():
 
     def _legal_k_length_actions(self, agent, k):
         return [action for action in self._legal_actions(agent) if len(action) <= k and action != agent.strategy]
+
+    def _legal_swap_actions(self, agent, k):
+        return [action for action in self._legal_actions(agent) if len(action) == k and action != agent.strategy]

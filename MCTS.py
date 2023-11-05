@@ -19,11 +19,14 @@ C = 1
 
 
 class MCTS(object):
-    def __init__(self, s0: State.State, budget=np.inf):
+    def __init__(self, s0: State.State, budget=np.inf, swap_only=False):
         self.tree = Graph(directed=True)
 
-        # Greedy
+        # For polynomial expansion
         self.k = budget
+
+        # Greedy (swap) equilibrium
+        self.swap_eq = swap_only
 
         # Metadata
         self.s0_prop = self.tree.new_vp("object")
@@ -57,7 +60,10 @@ class MCTS(object):
                 # Sequential play of better responses
                 for agent in start.NCG.agents:
                     # List all legal actions
-                    actions = start.NCG._legal_k_length_actions(agent, self.k)
+                    if not self.swap_eq:
+                        actions = start.NCG._legal_k_length_actions(agent, self.k)
+                    else:
+                        actions = start.NCG._legal_swap_actions(agent, self.k)
 
                     if (len(self.tree.get_out_neighbors(start.get_id)) < INIT_BRANCHING):
                         # Fetch costs of actions
@@ -73,7 +79,10 @@ class MCTS(object):
                 # Sequential play of better responses
                 for agent in start.NCG.agents:
                     # List all legal actions
-                    actions = start.NCG._legal_k_length_actions(agent, self.k)
+                    if not self.swap_eq:
+                        actions = start.NCG._legal_k_length_actions(agent, self.k)
+                    else:
+                        actions = start.NCG._legal_swap_actions(agent, self.k)
 
                     if (len(self.tree.get_out_neighbors(start.get_id)) < EXPANSION_BRANCHING):
                         # Fetch costs of actions
@@ -179,7 +188,12 @@ class MCTS(object):
             # Playout of random individual actions
             random_actions = len(initial_state.NCG.agents)*[None]
             for ii, a in enumerate(initial_state.NCG.agents):
-                actions = initial_state.NCG._legal_k_length_actions(a, self.k)
+                # List all legal actions
+                if not self.swap_eq:
+                    actions = initial_state.NCG._legal_k_length_actions(a, self.k)
+                else:
+                    actions = initial_state.NCG._legal_swap_actions(a, self.k)
+                
                 random_actions[ii] = np.random.choice(actions)
 
             for ii, action in enumerate(random_actions):
@@ -247,7 +261,10 @@ class MCTS(object):
         value = 0
         for a in node.NCG.agents:
             # List all legal actions
-            actions = node.NCG._legal_k_length_actions(a, self.k)
+            if not self.swap_eq:
+                actions = node.NCG._legal_k_length_actions(a, self.k)
+            else:
+                actions = node.NCG._legal_swap_actions(a, self.k)
 
             if not self._exists_better_response(a, actions, node):
                 value += 1

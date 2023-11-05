@@ -17,23 +17,20 @@ MAX_LOOPS = 1000
 
 # (3,5)-cage (Petersen)
 n = 10
-l = 10
+l = n
 adj = utils._create_petersen()
 
 # (3,6)-cage (Heawood)
 # n = 14
-# l = 14
+# l = n
 # adj = utils._create_heawood()
 
-# Logging config
-format = "%(asctime)s: %(message)s"
-logging.basicConfig(filename='log_cage_'+str(n)+'.txt',
-                    filemode='a', format=format, level=logging.DEBUG,
-                    datefmt="%d/%m/%Y %H:%M:%S")
+# (3,7)-cage (McGee)
+# n = 24
+# l = n
+# adj = utils._create_mcgee()
 
 alphas_ = np.logspace(np.log10(n/l), np.log10(n/2), 10, dtype=float)
-logging.info("NCG. alphas_ {}".format(alphas_))
-
 
 m = np.triu(adj.todense())
 es = np.nonzero(m)
@@ -44,7 +41,15 @@ dg = copy.deepcopy(ug)
 dg.set_directed(True)
 graph.set_ownership(dg)
 
-for ll, alpha in enumerate(alphas_):
+for _, alpha in enumerate(alphas_):
+
+    # Logging config
+    format = "%(asctime)s: %(message)s"
+    logging.basicConfig(filename='log_cage.txt',
+                        filemode='a', format=format, level=logging.DEBUG,
+                        datefmt="%d/%m/%Y %H:%M:%S")
+
+    logging.info("NCG. alphas_ {}".format(alphas_))
 
     logging.info("NCG. alpha/n {}/{}".format('{0:.2f}'.format(alpha), n))
 
@@ -100,8 +105,8 @@ for ll, alpha in enumerate(alphas_):
     from pathlib import Path
     from datetime import date
     src = Path()
-    dir = Path(str(ll)+'_cage_' +
+    dir = Path('{0:.2f}'.format(alpha)+'_cage_' +
                date.today().strftime("%Y%m%d"))
     dir.mkdir(parents=True, exist_ok=True)
-    for file in src.glob("*.pkl"):
-        file.replace(dir / file.name)
+    for pkls in src.glob("*.pkl"):
+        pkls.replace(dir / pkls.name)
