@@ -18,7 +18,7 @@ MAX_LOOPS = 1000
 # (3,5)-cage (Petersen)
 n = 10
 l = 10
-adj = utils._create()
+adj = utils._create_petersen()
 
 # (3,6)-cage (Heawood)
 # n = 14
