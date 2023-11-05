@@ -15,20 +15,25 @@ MAX_LOOPS = 1000
 #############################################################################################
 #############################################################################################
 
-# Petersen
+# (3,5)-cage (Petersen)
 n = 10
 l = 10
+adj = utils._create()
+
+# (3,6)-cage (Heawood)
+# n = 14
+# l = 14
+# adj = utils._create_heawood()
 
 # Logging config
 format = "%(asctime)s: %(message)s"
-logging.basicConfig(filename='log_biconnected_Petersen_'+str(n)+'.txt',
-                filemode='a', format=format, level=logging.DEBUG,
-                datefmt="%d/%m/%Y %H:%M:%S")
+logging.basicConfig(filename='log_cage_'+str(n)+'.txt',
+                    filemode='a', format=format, level=logging.DEBUG,
+                    datefmt="%d/%m/%Y %H:%M:%S")
 
-alphas_ = np.logspace(np.log10(n/l), np.log10(n/2), 10, dtype=float)[1:]
+alphas_ = np.logspace(np.log10(n/l), np.log10(n/2), 10, dtype=float)
 logging.info("NCG. alphas_ {}".format(alphas_))
 
-adj = utils._create_petersen()
 
 m = np.triu(adj.todense())
 es = np.nonzero(m)
@@ -57,7 +62,7 @@ for ll, alpha in enumerate(alphas_):
     state_0.set_scores(val)
 
     gt.draw.graph_draw(
-        ncg.network.ownership, vertex_text=ncg.network.ownership.vertex_index, output="fig/initial_mcts_own_biconnected_Petersen_"+str(n)+"_"+str(ll)+"_.pdf")
+        ncg.network.ownership, vertex_text=ncg.network.ownership.vertex_index, output="fig/initial_mcts_own_cage_"+str(n)+"_"+'{0:.2f}'.format(alpha)+".pdf")
 
     # Create instance of MCTS
     # Budget
@@ -89,14 +94,14 @@ for ll, alpha in enumerate(alphas_):
         states = [mcts.s0_prop[v] for v in mcts.tree.get_vertices()]
         for this in states:
             logging.info("State Id: {} (parent: {}, terminal: {}). Scores/mean val/visits count: {}/{}/{}".format(this.get_id, this.get_parent_id, this.is_terminal,
-                                                                                                                this.get_scores, this.get_mean_value, this.get_visits))
+                                                                                                                  this.get_scores, this.get_mean_value, this.get_visits))
 
     # Housekeeping
     from pathlib import Path
     from datetime import date
     src = Path()
-    dir = Path(str(ll)+'_biconnected_Petersen_' +
-            date.today().strftime("%Y%m%d"))
+    dir = Path(str(ll)+'_cage_' +
+               date.today().strftime("%Y%m%d"))
     dir.mkdir(parents=True, exist_ok=True)
     for file in src.glob("*.pkl"):
         file.replace(dir / file.name)
