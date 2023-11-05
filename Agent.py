@@ -1,8 +1,9 @@
 import numpy as np
+from typing import List
 
 class Agent():
-    history: list[float]
-    cost_history: list[set]
+    history: List[float]
+    cost_history: List[set]
     strategy: set
 
     def __init__(self, _id):
