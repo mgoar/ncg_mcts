@@ -15,19 +15,20 @@ MAX_LOOPS = 1000
 #############################################################################################
 #############################################################################################
 
-# Heawood
-n = 14
+# Petersen
+n = 10
+l = 10
 
 # Logging config
 format = "%(asctime)s: %(message)s"
-logging.basicConfig(filename='log_biconnected_Heawood_'+str(n)+'.txt',
+logging.basicConfig(filename='log_biconnected_Petersen_'+str(n)+'.txt',
                 filemode='a', format=format, level=logging.DEBUG,
                 datefmt="%d/%m/%Y %H:%M:%S")
 
-alphas_ = np.logspace(np.log10(n), np.log10(4*n), 5, dtype=float)[1:]
+alphas_ = np.logspace(np.log10(n/l), np.log10(n/2), 10, dtype=float)[1:]
 logging.info("NCG. alphas_ {}".format(alphas_))
 
-adj = utils._create_heawood()
+adj = utils._create_petersen()
 
 m = np.triu(adj.todense())
 es = np.nonzero(m)
@@ -56,7 +57,7 @@ for ll, alpha in enumerate(alphas_):
     state_0.set_scores(val)
 
     gt.draw.graph_draw(
-        ncg.network.ownership, vertex_text=ncg.network.ownership.vertex_index, output="fig/initial_mcts_own_biconnected_Heawood_"+str(n)+"_"+str(ll)+"_.pdf")
+        ncg.network.ownership, vertex_text=ncg.network.ownership.vertex_index, output="fig/initial_mcts_own_biconnected_Petersen_"+str(n)+"_"+str(ll)+"_.pdf")
 
     # Create instance of MCTS
     # Budget
@@ -94,7 +95,7 @@ for ll, alpha in enumerate(alphas_):
     from pathlib import Path
     from datetime import date
     src = Path()
-    dir = Path(str(ll)+'_biconnected_Heawood_' +
+    dir = Path(str(ll)+'_biconnected_Petersen_' +
             date.today().strftime("%Y%m%d"))
     dir.mkdir(parents=True, exist_ok=True)
     for file in src.glob("*.pkl"):
