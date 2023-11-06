@@ -16,14 +16,14 @@ MAX_LOOPS = 1000
 #############################################################################################
 
 # (3,5)-cage (Petersen)
-n = 10
-l = n
-adj = utils._create_petersen()
+# n = 10
+# l = n
+# adj = utils._create_petersen()
 
 # (3,6)-cage (Heawood)
-# n = 14
-# l = n
-# adj = utils._create_heawood()
+n = 14
+l = n
+adj = utils._create_heawood()
 
 # (3,7)-cage (McGee)
 # n = 24
@@ -45,7 +45,7 @@ for _, alpha in enumerate(alphas_):
 
     # Logging config
     format = "%(asctime)s: %(message)s"
-    logging.basicConfig(filename='log_cage.txt',
+    logging.basicConfig(filename='log_mcts_petersen_k_3.txt',
                         filemode='a', format=format, level=logging.DEBUG,
                         datefmt="%d/%m/%Y %H:%M:%S")
 
@@ -67,7 +67,7 @@ for _, alpha in enumerate(alphas_):
     state_0.set_scores(val)
 
     gt.draw.graph_draw(
-        ncg.network.ownership, vertex_text=ncg.network.ownership.vertex_index, output="fig/initial_mcts_own_cage_"+str(n)+"_"+'{0:.2f}'.format(alpha)+".pdf")
+        ncg.network.ownership, vertex_text=ncg.network.ownership.vertex_index, output="fig/initial_mcts_own_petersen_"+str(n)+"_"+'{0:.2f}'.format(alpha)+".pdf")
 
     # Create instance of MCTS
     # Budget
@@ -108,5 +108,5 @@ for _, alpha in enumerate(alphas_):
     dir = Path('{0:.2f}'.format(alpha)+'_cage_' +
                date.today().strftime("%Y%m%d"))
     dir.mkdir(parents=True, exist_ok=True)
-    for pkls in src.glob("*.pkl"):
-        pkls.replace(dir / pkls.name)
+    for pkl in src.glob("*.pkl"):
+        pkl.replace(dir / pkl.name)

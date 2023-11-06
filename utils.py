@@ -5,18 +5,6 @@ import numpy as np
 import copy
 
 
-def _create_random_blocks(order: int):
-
-    is_connected = False
-    while not is_connected:
-        sizes = [(order/2).astype(int), (order/2).astype(int)]
-        probs = [[0.25, .35], [.35, 0.25]]
-        g = nx.stochastic_block_model(sizes, probs, directed=False)
-        is_connected = nx.is_connected(g)
-
-    return nx.adjacency_matrix(g)
-
-
 def _create_petersen():
 
     return nx.adjacency_matrix(nx.petersen_graph())
