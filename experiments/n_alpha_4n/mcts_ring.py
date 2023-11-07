@@ -56,7 +56,7 @@ for ii, n in enumerate(n_):
         state_0.set_scores(val)
 
         gt.draw.graph_draw(
-            ncg.network.ownership, vertex_text=ncg.network.ownership.vertex_index, output="fig/initial_mcts_own_biconnected_ring_"+str(n)+"_"+str(ll)+"_.pdf")
+            ncg.network.ownership, vertex_text=ncg.network.ownership.vertex_index, output="fig/initial_mcts_own_biconnected_ring_"+str(n)+"_"+'{0:.2f}'.format(alpha)+"_.pdf")
 
         # Create instance of MCTS
         # Budget

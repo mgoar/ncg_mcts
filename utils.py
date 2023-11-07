@@ -10,6 +10,32 @@ def _create_petersen():
     return nx.adjacency_matrix(nx.petersen_graph())
 
 
+def _create_extended_petersen(order, diam):
+
+    pet = nx.petersen_graph()
+
+    # Subgraph last layer
+    bfs = _create_bfs_petersen()
+
+    x = np.round((order-len(pet.nodes()))/(diam-1)).astype(int)
+
+    layer = pet.subgraph(bfs[2][0:x])
+
+    P_n = nx.path_graph(diam-1)
+
+    keys = np.arange(diam-1)
+    vals = len(pet.nodes())+keys
+    dict_labels = dict(zip(keys, vals))
+
+    nx.relabel_nodes(P_n, dict_labels, copy=False)
+
+    g = nx.Graph(layer)
+    nx.add_path(g, P_n.nodes())
+    extended = nx.compose(pet, g)
+
+    return nx.adjacency_matrix(extended)
+
+
 def _create_heawood():
 
     return nx.adjacency_matrix(nx.heawood_graph())
@@ -21,7 +47,7 @@ def _create_mcgee():
 
     edges_dict = {0: (0, 12),
                   1: (1, 8),
-                  2: (2, 18),
+                  2: (2, 19),
                   3: (3, 15),
                   4: (4, 11),
                   5: (5, 22),
@@ -32,7 +58,7 @@ def _create_mcgee():
                   10: (13, 20),
                   11: (16, 23)}
 
-    cicle.add_edges_from(edges_dict)
+    cicle.add_edges_from(edges_dict.values())
 
     return nx.adjacency_matrix(cicle)
 
@@ -50,21 +76,6 @@ def _create_bfs_petersen():
     pet = nx.petersen_graph()
 
     return dict(enumerate(nx.bfs_layers(pet, [0])))
-
-
-def _create_extended_petersen(l=3):
-
-    G = _create_bfs_petersen()
-
-    # Subgraph last layer
-    G_ = G.subgraph(G[-1])
-    G_.clear_edges()
-
-    cicle = nx.cycle_graph(l)
-
-    extension = nx.rooted_product(G_, cicle, 0)
-
-    extended = nx.union(G, extension)
 
 
 def _find_cut_vertices(g):

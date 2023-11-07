@@ -45,7 +45,7 @@ for _, alpha in enumerate(alphas_):
 
     # Logging config
     format = "%(asctime)s: %(message)s"
-    logging.basicConfig(filename='log_mcts_petersen_k_3.txt',
+    logging.basicConfig(filename='log_mcts_heawood_k_2.txt',
                         filemode='a', format=format, level=logging.DEBUG,
                         datefmt="%d/%m/%Y %H:%M:%S")
 
@@ -67,7 +67,7 @@ for _, alpha in enumerate(alphas_):
     state_0.set_scores(val)
 
     gt.draw.graph_draw(
-        ncg.network.ownership, vertex_text=ncg.network.ownership.vertex_index, output="fig/initial_mcts_own_petersen_"+str(n)+"_"+'{0:.2f}'.format(alpha)+".pdf")
+        ncg.network.ownership, vertex_text=ncg.network.ownership.vertex_index, output="fig/initial_mcts_own_heawood_"+str(n)+"_"+'{0:.2f}'.format(alpha)+".pdf")
 
     # Create instance of MCTS
     # Budget

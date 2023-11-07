@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 from networkx.drawing.nx_pydot import graphviz_layout
 
+
 with open('experiments/alpha_n/results/petersen_k_3/3.50_cage_20231106/mcts_10_3.50_temp.pkl', 'rb') as file:
     mcts = pickle.load(file)
 
@@ -21,9 +22,11 @@ for node in mcts.s0_prop:
         print("Terminal child. State Id: {}/{}/{}".format(node.get_id,
                                                           node.get_scores, node.get_visits))
 
-        if not nx.is_tree(nx.Graph(gt.spectral.adjacency(node.NCG.network.ownership))):
+        g = nx.DiGraph(gt.spectral.adjacency(node.NCG.network.ownership))
+        if not nx.is_tree(g):
             print("NE non-tree.")
-            gt.graph_draw(node.NCG.network.ownership)
+            nx.draw_circular(g)
+            plt.show()
 
             for a in node.NCG.agents:
                 # List all legal actions
@@ -34,6 +37,7 @@ for node in mcts.s0_prop:
                     print("No BR found.")
         else:
             print("NE tree.")
+            nx.draw_circular(g)
 
 max = mcts._return_max_child(mcts.s0_prop[0])
 print("Max child. State Id: {}/{}/{}".format(max.get_id,
