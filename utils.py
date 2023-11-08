@@ -17,23 +17,22 @@ def _create_extended_petersen(order, diam):
     # Subgraph last layer
     bfs = _create_bfs_petersen()
 
-    x = np.round((order-len(pet.nodes()))/(diam-1)).astype(int)
+    avail = order - len(pet.nodes())
+    counter = len(pet.nodes())
 
-    layer = pet.subgraph(bfs[2][0:x])
+    # Length of paths
+    k = diam - nx.diameter(pet)
+    n_paths = np.round(avail/k).astype(int)
+    for i in np.arange(n_paths):
+        idx = i
+        root = bfs[2][idx]
+        for _ in np.arange(k):
+            pet.add_node(counter)
+            pet.add_edge(root, counter)
+            root = counter
+            counter += 1
 
-    P_n = nx.path_graph(diam-1)
-
-    keys = np.arange(diam-1)
-    vals = len(pet.nodes())+keys
-    dict_labels = dict(zip(keys, vals))
-
-    nx.relabel_nodes(P_n, dict_labels, copy=False)
-
-    g = nx.Graph(layer)
-    nx.add_path(g, P_n.nodes())
-    extended = nx.compose(pet, g)
-
-    return nx.adjacency_matrix(extended)
+    return nx.adjacency_matrix(pet)
 
 
 def _create_heawood():

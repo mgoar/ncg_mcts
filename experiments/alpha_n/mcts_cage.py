@@ -20,17 +20,24 @@ MAX_LOOPS = 1000
 # l = n
 # adj = utils._create_petersen()
 
+# Extended Petersen
+order = 12
+n = order
+l = n/2
+diam = 4
+adj = utils._create_extended_petersen(order, diam)
+
 # (3,6)-cage (Heawood)
-n = 14
-l = n
-adj = utils._create_heawood()
+# n = 14
+# l = n
+# adj = utils._create_heawood()
 
 # (3,7)-cage (McGee)
 # n = 24
 # l = n
 # adj = utils._create_mcgee()
 
-alphas_ = np.logspace(np.log10(n/l), np.log10(n/2), 10, dtype=float)
+alphas_ = np.logspace(np.log10(n/l), np.log10(4*n), 10, dtype=float)[-4:-1]
 
 m = np.triu(adj.todense())
 es = np.nonzero(m)
@@ -45,7 +52,7 @@ for _, alpha in enumerate(alphas_):
 
     # Logging config
     format = "%(asctime)s: %(message)s"
-    logging.basicConfig(filename='log_mcts_heawood_k_2.txt',
+    logging.basicConfig(filename='log_mcts_extended_12_4.txt',
                         filemode='a', format=format, level=logging.DEBUG,
                         datefmt="%d/%m/%Y %H:%M:%S")
 
@@ -67,7 +74,7 @@ for _, alpha in enumerate(alphas_):
     state_0.set_scores(val)
 
     gt.draw.graph_draw(
-        ncg.network.ownership, vertex_text=ncg.network.ownership.vertex_index, output="fig/initial_mcts_own_heawood_"+str(n)+"_"+'{0:.2f}'.format(alpha)+".pdf")
+        ncg.network.ownership, vertex_text=ncg.network.ownership.vertex_index, output="fig/initial_mcts_own_extended_12_4_"+str(n)+"_"+'{0:.2f}'.format(alpha)+".pdf")
 
     # Create instance of MCTS
     # Budget
@@ -105,7 +112,7 @@ for _, alpha in enumerate(alphas_):
     from pathlib import Path
     from datetime import date
     src = Path()
-    dir = Path('{0:.2f}'.format(alpha)+'_cage_' +
+    dir = Path('{0:.2f}'.format(alpha)+'_extended_12_4' +
                date.today().strftime("%Y%m%d"))
     dir.mkdir(parents=True, exist_ok=True)
     for pkl in src.glob("*.pkl"):

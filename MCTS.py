@@ -193,8 +193,9 @@ class MCTS(object):
                     actions = initial_state.NCG._legal_k_length_actions(a, self.k)
                 else:
                     actions = initial_state.NCG._legal_swap_actions(a, self.k)
-                
-                random_actions[ii] = np.random.choice(actions)
+
+                jj = np.random.choice(np.arange(len(actions)))
+                random_actions[ii] = actions[jj]
 
             for ii, action in enumerate(random_actions):
                 agent = initial_state.NCG.agents[ii]
@@ -236,7 +237,7 @@ class MCTS(object):
         # Update scores
         self._update_scores(child)
 
-        if(set_value):
+        if (set_value):
             self._set_value(child)
 
         if is_terminal:

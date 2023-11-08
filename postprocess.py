@@ -6,11 +6,12 @@ import networkx as nx
 from networkx.drawing.nx_pydot import graphviz_layout
 
 
-with open('experiments/alpha_n/results/petersen_k_3/3.50_cage_20231106/mcts_10_3.50_temp.pkl', 'rb') as file:
+#with open('experiments/alpha_n/results/petersen_k_3/3.50_cage_20231106/mcts_10_3.50_temp.pkl', 'rb') as file:
+with open('mcts_12_2.85_temp.pkl', 'rb') as file:
     mcts = pickle.load(file)
 
 tree = nx.Graph(gt.spectral.adjacency(mcts.tree))
-pos = graphviz_layout(tree, prog="dot")
+pos = nx.nx_agraph.graphviz_layout(tree, prog="dot")
 nx.draw(tree, pos, node_size=2)
 plt.show()
 
