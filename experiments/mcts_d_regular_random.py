@@ -15,19 +15,21 @@ MAX_LOOPS = 1000
 #############################################################################################
 #############################################################################################
 
+# d-regular random graph. Orders
 n_ = (np.ceil(np.logspace(np.log10(10), np.log10(100), 5) / 2)*2).astype(int)
+d = 3
 
 for ii, n in enumerate(n_):
     # Logging config
     format = "%(asctime)s: %(message)s"
-    logging.basicConfig(filename='log_biconnected_ring_'+str(n)+'.txt',
+    logging.basicConfig(filename='log_d_regular_random_'+str(n)+'.txt',
                         filemode='a', format=format, level=logging.DEBUG,
                         datefmt="%d/%m/%Y %H:%M:%S")
 
-    alphas_ = np.logspace(np.log10(n), np.log10(4*n), 5, dtype=float)[1:]
+    alphas_ = np.hstack([n, np.logspace(np.log10(n-n/4), np.log10(2*n), 10, dtype=float)])
     logging.info("NCG. alphas_ {}".format(alphas_))
 
-    adj = utils._create_ring(n)
+    adj = utils._create_d_regular_random_graph(n, d)
 
     m = np.triu(adj.todense())
     es = np.nonzero(m)
@@ -56,7 +58,7 @@ for ii, n in enumerate(n_):
         state_0.set_scores(val)
 
         gt.draw.graph_draw(
-            ncg.network.ownership, vertex_text=ncg.network.ownership.vertex_index, output="fig/initial_mcts_own_biconnected_ring_"+str(n)+"_"+'{0:.2f}'.format(alpha)+"_.pdf")
+            ncg.network.ownership, vertex_text=ncg.network.ownership.vertex_index, output="fig/initial_mcts_own_d_regular_random_"+str(n)+"_"+'{0:.2f}'.format(alpha)+"_.pdf")
 
         # Create instance of MCTS
         # Budget
@@ -68,7 +70,7 @@ for ii, n in enumerate(n_):
             logging.info("MCTS iteration: {}/{}".format(_+1, MAX_LOOPS))
 
             # Save MCTS tree
-            with open('mcts_'+str(n)+'_'+str('{0:.2f}'.format(alpha))+'_temp.pkl', 'wb') as file:
+            with open('mcts_d_regular_random_'+str(n)+'_'+str('{0:.2f}'.format(alpha))+'_temp.pkl', 'wb') as file:
                 pickle.dump(mcts, file)
 
             s = mcts.selection(state_0)
@@ -94,7 +96,7 @@ for ii, n in enumerate(n_):
         from pathlib import Path
         from datetime import date
         src = Path()
-        dir = Path(str(ll)+'_biconnected_ring_' +
+        dir = Path(str(ll)+'_d_regular_random_' +
                    date.today().strftime("%Y%m%d"))
         dir.mkdir(parents=True, exist_ok=True)
         for file in src.glob("*.pkl"):

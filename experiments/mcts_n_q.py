@@ -33,7 +33,7 @@ graph = Network.Network(gt.spectral.adjacency(ug).todense(), n)
 # graph.set_ownership(dg_p)
 graph.set_ownership(dg)
 
-alphas_ = np.logspace(np.log10(n), np.log10(4*n), 10, dtype=float)[1:]
+alphas_ = np.logspace(np.log10(n-3), np.log10(4*n), 10, dtype=float)
 logging.info("NCG. alphas_ {}".format(alphas_))
 
 for ll, alpha in enumerate(alphas_):

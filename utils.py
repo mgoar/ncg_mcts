@@ -5,6 +5,18 @@ import numpy as np
 import copy
 
 
+def _create_d_regular_random_graph(order, d):
+    return nx.adjacency_matrix(nx.random_regular_graph(d, order))
+
+
+def _create_random_graph(order, sparse=False):
+
+    if sparse:
+        return nx.adjacency_matrix(nx.fast_gnp_random_graph(order, 0.1))
+    else:
+        return nx.adjacency_matrix(nx.gnp_random_graph(order, 0.5))
+    
+
 def _create_petersen():
 
     return nx.adjacency_matrix(nx.petersen_graph())

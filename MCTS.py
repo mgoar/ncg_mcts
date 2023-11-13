@@ -167,14 +167,10 @@ class MCTS(object):
             logging.info("Simulation. State Id: {}".format(state.get_id))
             if not state.is_terminal:
                 # Default policy
-                s = self._apply_default_policy(state, "random")
+                s = self._apply_default_policy(state, "random_drawn")
 
                 logging.info(
                     "Simulation. State mean value/Scores: {}/{}".format(s.get_mean_value, s.get_scores))
-
-                # Set to terminal if value equals number of agents (NE)
-                if s.get_mean_value == len(s.NCG.agents):
-                    s.set_terminal()
 
                 return s
             else:
@@ -183,35 +179,60 @@ class MCTS(object):
             logging.error("Simulation. No available states. Exiting")
             pass
 
-    def _apply_default_policy(self, initial_state: State.State, heuristic="random") -> State.State:
-        if heuristic == "random":
-            # Playout of random individual actions
-            random_actions = len(initial_state.NCG.agents)*[None]
-            for ii, a in enumerate(initial_state.NCG.agents):
+    def _apply_default_policy(self, initial_state: State.State, heuristic="round-robin") -> State.State:
+        if heuristic == "round-robin":
+            # Round-robin playout
+            for a in initial_state.NCG.agents:
                 # List all legal actions
                 if not self.swap_eq:
-                    actions = initial_state.NCG._legal_k_length_actions(a, self.k)
+                    actions = initial_state.NCG._legal_k_length_actions(
+                        a, self.k)
                 else:
                     actions = initial_state.NCG._legal_swap_actions(a, self.k)
 
                 jj = np.random.choice(np.arange(len(actions)))
-                random_actions[ii] = actions[jj]
 
-            for ii, action in enumerate(random_actions):
-                agent = initial_state.NCG.agents[ii]
                 v = self._append_tree_node(
-                    initial_state, agent, action, False, True)
+                    initial_state, a, actions[jj], False, True)
                 initial_state = self.s0_prop[v]
 
                 # Set to terminal if value equals number of agents
                 if initial_state.get_mean_value == len(initial_state.NCG.agents):
-                    initial_state.set_terminal()
+                    break
+        elif heuristic == "random_drawn":
+            # Playout of individuals randomly drawn
+            n = len(initial_state.NCG.agents)
+            order = np.random.choice(np.arange(n), size=n**2, replace=True)
 
-            return initial_state
+            for i in order:
+                a = initial_state.NCG.agents[i]
+
+                # List all legal actions
+                if not self.swap_eq:
+                    actions = initial_state.NCG._legal_k_length_actions(
+                        a, self.k)
+                else:
+                    actions = initial_state.NCG._legal_swap_actions(a, self.k)
+
+                # Fetch better responses
+                better_responses = self._fetch_costs(
+                    a, actions, initial_state)
+
+                if len(better_responses) > 0:
+                    jj = np.random.choice(np.arange(len(better_responses)))
+                    v = self._append_tree_node(
+                        initial_state, a, better_responses[jj][0], False, True)
+                    initial_state = self.s0_prop[v]
+
+                    # Set to terminal if value equals number of agents
+                    if initial_state.get_mean_value == len(initial_state.NCG.agents):
+                        break
+
+        return initial_state
 
     def backpropagation(self, initial_state: State.State, end_state: State.State):
 
-        # Remove simulation path
+        # Find backtrace from simulated state
         backtrace = self._find_backtrace(end_state)
 
         # Remove from terminal_state to child of initial_state
@@ -222,6 +243,7 @@ class MCTS(object):
         # Update mean value
         for state in self._find_backtrace(initial_state):
             state.update_mean_value(end_state.get_mean_value)
+
 
     def _append_tree_node(self, s: State.State, agent: Agent.Agent, action: Tuple, is_terminal=False, set_value=False) -> graph_tool.libgraph_tool_core.Vertex:
 
@@ -302,11 +324,13 @@ class MCTS(object):
 
         return [state] + [self.s0_prop[v] for v in v_[1:]]
 
-    def _fetch_costs(self, agent: Agent.Agent, actions: List[Tuple], s: State.State) -> List[Tuple[Tuple, float]]:
+    def _fetch_costs(self, agent: Agent.Agent, actions: List[Tuple], s: State.State, stop=False) -> List[Tuple[Tuple, float]]:
         results = []
         with multiprocessing.Pool() as pool:
             for result in pool.map(partial(s.NCG._is_better_response, agent=agent), actions):
                 results.append(result)
+                if result[0] and stop:
+                    break
 
         return [(action, cost) for ((is_better_response, cost), action) in zip(results, actions) if is_better_response]
 

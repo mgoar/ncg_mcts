@@ -21,23 +21,23 @@ MAX_LOOPS = 1000
 # adj = utils._create_petersen()
 
 # Extended Petersen
-order = 12
-n = order
-l = n/2
-diam = 4
-adj = utils._create_extended_petersen(order, diam)
+# order = 12
+# n = order
+# l = n/2
+# diam = 4
+# adj = utils._create_extended_petersen(order, diam)
 
 # (3,6)-cage (Heawood)
-# n = 14
-# l = n
-# adj = utils._create_heawood()
+n = 14
+l = n/2
+adj = utils._create_heawood()
 
 # (3,7)-cage (McGee)
 # n = 24
-# l = n
+# l = n/2
 # adj = utils._create_mcgee()
 
-alphas_ = np.logspace(np.log10(n/l), np.log10(4*n), 10, dtype=float)[-4:-1]
+alphas_ = np.logspace(np.log10(n/l), np.log10(2*n), 10, dtype=float)[-6:-1]
 
 m = np.triu(adj.todense())
 es = np.nonzero(m)
