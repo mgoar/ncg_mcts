@@ -9,13 +9,34 @@ def _create_d_regular_random_graph(order, d):
     return nx.adjacency_matrix(nx.random_regular_graph(d, order))
 
 
+def p_erdos_renyi(n, mode):
+    if mode == "components":
+        # Sharp threshold: ln(n)/n
+        eps = 1/2
+        return np.random.uniform(low=np.log(n)/n,
+                                 high=(1+eps)*np.log(n)/n)
+    elif mode == "connectivity":
+        eps = 1/n
+        return np.random.uniform(low=1/n,
+                                 high=(1-eps)*np.log(n)/n)
+
+
 def _create_random_graph(order, sparse=False):
 
+    G = nx.empty_graph(order)
     if sparse:
-        return nx.adjacency_matrix(nx.fast_gnp_random_graph(order, 0.1))
+        while not nx.is_connected(G):
+            p = p_erdos_renyi(order, "connectivity")
+            G = nx.fast_gnp_random_graph(order, p)
+
+        return nx.adjacency_matrix(G), p
     else:
-        return nx.adjacency_matrix(nx.gnp_random_graph(order, 0.5))
-    
+        while not nx.is_connected(G):
+            p = p_erdos_renyi(order, "components")
+            G = nx.gnp_random_graph(order, p)
+
+        return nx.adjacency_matrix(G), p
+
 
 def _create_petersen():
 

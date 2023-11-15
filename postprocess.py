@@ -4,7 +4,7 @@ import graph_tool as gt
 import matplotlib.pyplot as plt
 import networkx as nx
 
-with open('mcts_d_regular_random_10_5.83_temp.pkl', 'rb') as file:
+with open('3_random_20231115/mcts_random_10_12.60_0_temp.pkl', 'rb') as file:
     mcts = pickle.load(file)
 
 tree = nx.Graph(gt.spectral.adjacency(mcts.tree))
@@ -32,13 +32,13 @@ for node in mcts.s0_prop:
             nx.draw(g, pos, node_size=2)
             plt.show()
 
-        for a in node.NCG.agents:
-            # List all legal actions
-            actions = node.NCG._legal_k_length_actions(a, mcts.k)
-            if mcts._exists_better_response(a, actions, node):
-                print("BR found.")
-            else:
-                print("No BR found.")
+        # for a in node.NCG.agents:
+        #     # List all legal actions
+        #     actions = node.NCG._legal_k_length_actions(a, mcts.k)
+        #     if mcts._exists_better_response(a, actions, node):
+        #         print("BR found.")
+        #     else:
+        #         print("No BR found.")
 
 max = mcts._return_max_child(mcts.s0_prop[0])
 print("Max child. State Id: {}/{}/{}/{}".format(max.get_id,

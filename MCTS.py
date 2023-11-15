@@ -11,7 +11,7 @@ import State
 
 MAX_DEPTH = 10**5
 
-INIT_BRANCHING = 10**3
+INIT_BRANCHING = 10**4
 EXPANSION_BRANCHING = 1
 INIT_DEPTH = 2
 
@@ -38,6 +38,9 @@ class MCTS(object):
         # Set to terminal if value equals number of agents (NE)
         if s0.get_mean_value == len(s0.NCG.agents):
             s0.set_terminal()
+
+        # List of NE
+        self.ne = []
 
         self.initialize()
 
@@ -226,24 +229,31 @@ class MCTS(object):
 
                     # Set to terminal if value equals number of agents
                     if initial_state.get_mean_value == len(initial_state.NCG.agents):
+                        self.ne.append(initial_state)
                         break
 
         return initial_state
 
-    def backpropagation(self, initial_state: State.State, end_state: State.State):
+    def backpropagation(self, initial_state: State.State, end_state: State.State, keep_branch=False):
 
         # Find backtrace from simulated state
         backtrace = self._find_backtrace(end_state)
 
-        # Remove from terminal_state to child of initial_state
-        for this_state in backtrace[0:backtrace.index(initial_state)]:
-            if this_state.get_id != initial_state.get_id:
-                self.tree.remove_vertex(this_state.get_id)
+        if end_state.is_terminal and keep_branch:
+            # Update visits
+            for state in backtrace:
+                if state.get_id > initial_state.get_id:
+                    state.incr_visits()
+                state.update_mean_value(end_state.get_mean_value)
+        else:
+            # Remove from terminal_state to child of initial_state
+            for this_state in backtrace[0:backtrace.index(initial_state)]:
+                if this_state.get_id != initial_state.get_id:
+                    self.tree.remove_vertex(this_state.get_id)
 
-        # Update mean value
-        for state in self._find_backtrace(initial_state):
-            state.update_mean_value(end_state.get_mean_value)
-
+            # Update mean value
+            for state in self._find_backtrace(initial_state):
+                state.update_mean_value(end_state.get_mean_value)
 
     def _append_tree_node(self, s: State.State, agent: Agent.Agent, action: Tuple, is_terminal=False, set_value=False) -> graph_tool.libgraph_tool_core.Vertex:
 
