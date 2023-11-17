@@ -21,11 +21,11 @@ sparse = False
 regular = False
 
 for n in n_:
-    alphas = np.hstack([n, np.logspace(np.log10(n), np.log10(2*n), 10, dtype=float)[1:]])
-    for ii, _ in enumerate(n):
+    alphas = np.hstack([n, np.logspace(np.log10(n), np.log10(2*n), 5, dtype=float)[1:]])
+    for _ in np.arange(n):
         # Logging config
         format = "%(asctime)s: %(message)s"
-        logging.basicConfig(filename='log_random_'+str(n)+'_'+str(ii)+'.txt',
+        logging.basicConfig(filename='log_random_'+str(n)+'_'+str(_)+'.txt',
                             filemode='a', format=format, level=logging.DEBUG,
                             datefmt="%d/%m/%Y %H:%M:%S")
         logging.info("NCG. alphas {}".format(np.round(alphas, 2)))
@@ -77,7 +77,7 @@ for n in n_:
                     logging.info("MCTS iteration: {}/{}".format(_+1, MAX_LOOPS))
 
                     # Save MCTS tree
-                    with open('mcts_random_'+str(n)+'_'+str('{0:.2f}'.format(alpha))+"_"+str(ii)+'_temp.pkl', 'wb') as file:
+                    with open('mcts_random_'+str(n)+'_'+str('{0:.2f}'.format(alpha))+'_'+str(_)+'_temp.pkl', 'wb') as file:
                         pickle.dump(mcts, file)
 
                     s = mcts.selection(state_0)
@@ -103,7 +103,7 @@ for n in n_:
                 from pathlib import Path
                 from datetime import date
                 src = Path()
-                dir = Path('mcts_random_' + str(ii) + '_' +
+                dir = Path('mcts_random_' + str(_) + '_' +
                         date.today().strftime("%Y%m%d"))
                 dir.mkdir(parents=True, exist_ok=True)
                 for file in src.glob("*.pkl"):
