@@ -65,7 +65,8 @@ class MCTS(object):
                 for agent in start.NCG.agents:
                     # List all legal actions
                     if not self.swap_eq:
-                        actions = start.NCG._legal_k_length_actions(agent, self.k)
+                        actions = start.NCG._legal_k_length_actions(
+                            agent, self.k)
                     else:
                         actions = start.NCG._legal_swap_actions(agent, self.k)
 
@@ -84,7 +85,8 @@ class MCTS(object):
                 for agent in start.NCG.agents:
                     # List all legal actions
                     if not self.swap_eq:
-                        actions = start.NCG._legal_k_length_actions(agent, self.k)
+                        actions = start.NCG._legal_k_length_actions(
+                            agent, self.k)
                     else:
                         actions = start.NCG._legal_swap_actions(agent, self.k)
 
@@ -161,7 +163,7 @@ class MCTS(object):
 
             else:
                 logging.error(
-                    "Expansion. No expanded node found from State Id.: {}".format(state.get_id))
+                    "Expansion. No expanded node found from State Id: {}".format(state.get_id))
 
         return state
 
@@ -232,6 +234,8 @@ class MCTS(object):
                     if initial_state.get_mean_value == len(initial_state.NCG.agents):
                         self.ne.append(initial_state)
                         if not utils._is_tree(initial_state):
+                            logging.info(
+                                "Simulation. Non-tree NE found. State Id: {}".format(initial_state.get_id))
                             break
 
         return initial_state

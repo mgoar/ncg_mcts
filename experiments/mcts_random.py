@@ -16,18 +16,21 @@ MAX_LOOPS = 1000
 #############################################################################################
 
 # G(n,p) random graph. Orders
-n_ = np.hstack([np.arange(10, 16), np.logspace(np.log10(15), np.log10(100), 10).astype(int)[1:]])
+n_ = np.arange(10, 16)
 sparse = False
 regular = False
 
 for n in n_:
-    alphas = np.hstack([n, np.logspace(np.log10(n), np.log10(2*n), 5, dtype=float)[1:]])
+    alphas = np.hstack([n, 
+                        np.logspace(np.log10(n), np.log10(2*n), 5, dtype=float)[1:], 
+                        np.logspace(np.log10(n), np.log10(n/2), 5, dtype=float)[1:]])
     for _ in np.arange(n):
         # Logging config
         format = "%(asctime)s: %(message)s"
         logging.basicConfig(filename='log_random_'+str(n)+'_'+str(_)+'.txt',
                             filemode='a', format=format, level=logging.DEBUG,
                             datefmt="%d/%m/%Y %H:%M:%S")
+        logging.info("NCG. n_ {}".format(n_))
         logging.info("NCG. alphas {}".format(np.round(alphas, 2)))
 
         for ll, alpha in enumerate(alphas):
@@ -75,6 +78,11 @@ for n in n_:
                 # MCTS loop
                 for _ in np.arange(MAX_LOOPS):
                     logging.info("MCTS iteration: {}/{}".format(_+1, MAX_LOOPS))
+
+                    # Check number of NE found so far and break execution if necessary
+                    if len(mcts.ne) > mcts.tree.get_out_neighbors(state_0.get_id)/2:
+                        logging.info("MCTS: number of NE found ({}) exceeded.".format(len(mcts.ne)))
+                        break
 
                     # Save MCTS tree
                     with open('mcts_random_'+str(n)+'_'+str('{0:.2f}'.format(alpha))+'_'+str(_)+'_temp.pkl', 'wb') as file:
