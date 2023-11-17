@@ -15,7 +15,7 @@ MAX_LOOPS = 1000
 #############################################################################################
 #############################################################################################
 
-n_ = (np.ceil(np.logspace(np.log10(10), np.log10(100), 5) / 2)*2).astype(int)
+n_ = (np.ceil(np.logspace(np.log10(10), np.log10(100), 10) / 2)*2).astype(int)
 
 for ii, n in enumerate(n_):
     # Logging config
@@ -94,7 +94,7 @@ for ii, n in enumerate(n_):
         from pathlib import Path
         from datetime import date
         src = Path()
-        dir = Path(str(ll)+'_biconnected_ring_' +
+        dir = Path('biconnected_ring_' + str(ll)+ '_' +
                    date.today().strftime("%Y%m%d"))
         dir.mkdir(parents=True, exist_ok=True)
         for file in src.glob("*.pkl"):

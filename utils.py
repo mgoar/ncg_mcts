@@ -5,6 +5,11 @@ import numpy as np
 import copy
 
 
+def _is_tree(node):
+    g = nx.DiGraph(gt.spectral.adjacency(node.NCG.network.ownership))
+    return nx.is_tree(g)
+
+
 def _create_d_regular_random_graph(order, d):
     return nx.adjacency_matrix(nx.random_regular_graph(d, order))
 

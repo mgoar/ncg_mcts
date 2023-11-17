@@ -4,7 +4,8 @@ import graph_tool as gt
 import matplotlib.pyplot as plt
 import networkx as nx
 
-with open('3_random_20231115/mcts_random_10_12.60_0_temp.pkl', 'rb') as file:
+#with open('3_random_20231115/mcts_random_10_12.60_0_temp.pkl', 'rb') as file:
+with open('mcts_10_7.50_temp.pkl', 'rb') as file:
     mcts = pickle.load(file)
 
 tree = nx.Graph(gt.spectral.adjacency(mcts.tree))
@@ -13,7 +14,7 @@ nx.draw(tree, pos, node_size=2)
 plt.show()
 
 terminal_nodes = []
-for node in mcts.s0_prop:
+for node in mcts.ne:
     if node.is_terminal:
         terminal_nodes.append(node)
 
@@ -28,9 +29,9 @@ for node in mcts.s0_prop:
 
         else:
             print("NE tree.")
-            pos = nx.nx_agraph.graphviz_layout(g, prog="dot")
-            nx.draw(g, pos, node_size=2)
-            plt.show()
+            #pos = nx.nx_agraph.graphviz_layout(g, prog="dot")
+            #nx.draw(g, pos, node_size=2)
+            #plt.show()
 
         # for a in node.NCG.agents:
         #     # List all legal actions

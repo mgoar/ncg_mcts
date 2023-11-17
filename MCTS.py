@@ -8,6 +8,7 @@ from typing import List, Tuple
 
 import Agent
 import State
+import utils
 
 MAX_DEPTH = 10**5
 
@@ -182,7 +183,7 @@ class MCTS(object):
             logging.error("Simulation. No available states. Exiting")
             pass
 
-    def _apply_default_policy(self, initial_state: State.State, heuristic="round-robin") -> State.State:
+    def _apply_default_policy(self, initial_state: State.State, heuristic="random_drawn") -> State.State:
         if heuristic == "round-robin":
             # Round-robin playout
             for a in initial_state.NCG.agents:
@@ -230,7 +231,8 @@ class MCTS(object):
                     # Set to terminal if value equals number of agents
                     if initial_state.get_mean_value == len(initial_state.NCG.agents):
                         self.ne.append(initial_state)
-                        break
+                        if not utils._is_tree(initial_state):
+                            break
 
         return initial_state
 
