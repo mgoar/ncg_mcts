@@ -3,6 +3,11 @@ import numpy as np
 
 
 class State():
+    parent_id: int
+    _id: int
+    mean_value: int
+    visits: int
+    is_terminal: bool
 
     def __init__(self, n, id, ncg):
         self.NCG = ncg
@@ -27,20 +32,20 @@ class State():
         """Returns scores (n-tuple indexed by agent)."""
         return self._scores
 
-    def set_scores(self, val):
+    def set_scores(self, val: np.ndarray):
         """Sets scores (n-tuple indexed by agent)."""
         self._scores = val
 
-    def set_mean_value(self, val):
+    def set_mean_value(self, val: int):
         """Sets mean value."""
         self.mean_value = val
 
     @property
-    def get_mean_value(self) -> float:
+    def get_mean_value(self) -> int:
         """Returns mean value."""
         return self.mean_value
 
-    def update_mean_value(self, val):
+    def update_mean_value(self, val: int):
         self.mean_value = np.max([val, self.mean_value])
 
     @property

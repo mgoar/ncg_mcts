@@ -22,8 +22,8 @@ regular = False
 
 for n in n_:
     alphas = np.hstack([n, 
-                        np.logspace(np.log10(n), np.log10(2*n), 5, dtype=float)[1:], 
-                        np.logspace(np.log10(n), np.log10(n/2), 5, dtype=float)[1:]])
+                    np.logspace(np.log10(n), np.log10(2*n), 10, dtype=float)[1:3], 
+                    np.logspace(np.log10(n), np.log10(n/2), 10, dtype=float)[1:3]])
     for _ in np.arange(n):
         # Logging config
         format = "%(asctime)s: %(message)s"
@@ -70,7 +70,7 @@ for n in n_:
                 # Create instance of MCTS
                 # Budget
                 if not regular:
-                    k = np.round(n / 2).astype(int)
+                    k = 2
                 else:
                     k = d-1
                 mcts = MCTS.MCTS(state_0, k)
@@ -80,12 +80,12 @@ for n in n_:
                     logging.info("MCTS iteration: {}/{}".format(_+1, MAX_LOOPS))
 
                     # Check number of NE found so far and break execution if necessary
-                    if len(mcts.ne) > mcts.tree.get_out_neighbors(state_0.get_id)/2:
+                    if len(mcts.ne) > len(mcts.tree.get_out_neighbors(state_0.get_id))**2:
                         logging.info("MCTS: number of NE found ({}) exceeded.".format(len(mcts.ne)))
                         break
 
                     # Save MCTS tree
-                    with open('mcts_random_'+str(n)+'_'+str('{0:.2f}'.format(alpha))+'_'+str(_)+'_temp.pkl', 'wb') as file:
+                    with open('mcts_random_'+str(n)+'_'+str('{0:.2f}'.format(alpha))+'_'+str(ii)+'_temp.pkl', 'wb') as file:
                         pickle.dump(mcts, file)
 
                     s = mcts.selection(state_0)
@@ -105,14 +105,12 @@ for n in n_:
                     states = [mcts.s0_prop[v] for v in mcts.tree.get_vertices()]
                     for this in states:
                         logging.info("State Id: {} (parent: {}, terminal: {}). Scores/mean val/visits count: {}/{}/{}".format(this.get_id, this.get_parent_id, this.is_terminal,
-                                                                                                                            this.get_scores, this.get_mean_value, this.get_visits))
+                                                                                                                            this.get_scores, np.round(this.get_mean_value,2), this.get_visits))
 
                 # Housekeeping
                 from pathlib import Path
-                from datetime import date
                 src = Path()
-                dir = Path('mcts_random_' + str(_) + '_' +
-                        date.today().strftime("%Y%m%d"))
+                dir = Path('mcts_random_'+str(n)+'_'+str('{0:.2f}'.format(alpha))+'_'+str(ii))
                 dir.mkdir(parents=True, exist_ok=True)
                 for file in src.glob("*.pkl"):
                     file.replace(dir / file.name)

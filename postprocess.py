@@ -4,8 +4,7 @@ import graph_tool as gt
 import matplotlib.pyplot as plt
 import networkx as nx
 
-#with open('3_random_20231115/mcts_random_10_12.60_0_temp.pkl', 'rb') as file:
-with open('mcts_10_7.50_temp.pkl', 'rb') as file:
+with open('mcts_random_10_10.00_0_temp.pkl', 'rb') as file:
     mcts = pickle.load(file)
 
 tree = nx.Graph(gt.spectral.adjacency(mcts.tree))

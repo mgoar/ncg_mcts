@@ -13,7 +13,7 @@ import utils
 MAX_DEPTH = 10**5
 
 INIT_BRANCHING = 10**4
-EXPANSION_BRANCHING = 1
+EXPANSION_BRANCHING = 10
 INIT_DEPTH = 2
 
 C = 1
@@ -142,18 +142,19 @@ class MCTS(object):
         logging.info(
             "Performing expansion at State Id: {}".format(state.get_id))
         if (state.get_parent_id == 0) and (state.get_visits == 1):
-            # Perform simulation
+            # Perform simulation. Skip
             # Set to terminal if value equals number of agents (NE)
             if state.get_mean_value == len(state.NCG.agents):
                 state.set_terminal()
 
         else:
-            # Expand a random better response
+            # Expand random better response(s)
             self.recursive_best_response(state, None, True)
 
             if len(self.tree.get_out_neighbors(state.get_id)) > 0:
-                state = self.s0_prop[np.random.choice(
-                    self.tree.get_out_neighbors(state.get_id))]
+                child = self.tree.get_out_neighbors(state.get_id)
+                mean_values = [n.get_mean_value for n in child]
+                state = self.s0_prop[self.tree.get_out_neighbors(state.get_id)[np.argmax(mean_values)[0]]]
 
                 state.incr_visits()
 
@@ -176,7 +177,7 @@ class MCTS(object):
                 s = self._apply_default_policy(state, "random_drawn")
 
                 logging.info(
-                    "Simulation. State mean value/Scores: {}/{}".format(s.get_mean_value, s.get_scores))
+                    "Simulation. State mean value/Scores: {}/{}".format(np.round(s.get_mean_value,2), s.get_scores))
 
                 return s
             else:
@@ -186,26 +187,7 @@ class MCTS(object):
             pass
 
     def _apply_default_policy(self, initial_state: State.State, heuristic="random_drawn") -> State.State:
-        if heuristic == "round-robin":
-            # Round-robin playout
-            for a in initial_state.NCG.agents:
-                # List all legal actions
-                if not self.swap_eq:
-                    actions = initial_state.NCG._legal_k_length_actions(
-                        a, self.k)
-                else:
-                    actions = initial_state.NCG._legal_swap_actions(a, self.k)
-
-                jj = np.random.choice(np.arange(len(actions)))
-
-                v = self._append_tree_node(
-                    initial_state, a, actions[jj], False, True)
-                initial_state = self.s0_prop[v]
-
-                # Set to terminal if value equals number of agents
-                if initial_state.get_mean_value == len(initial_state.NCG.agents):
-                    break
-        elif heuristic == "random_drawn":
+        if heuristic == "random_drawn":
             # Playout of individuals randomly drawn
             n = len(initial_state.NCG.agents)
             order = np.random.choice(np.arange(n), size=n**2, replace=True)
@@ -230,13 +212,15 @@ class MCTS(object):
                         initial_state, a, better_responses[jj][0], False, True)
                     initial_state = self.s0_prop[v]
 
-                    # Set to terminal if value equals number of agents
-                    if initial_state.get_mean_value == len(initial_state.NCG.agents):
+                    # Save NE
+                    if initial_state.is_terminal:
                         self.ne.append(initial_state)
                         if not utils._is_tree(initial_state):
                             logging.info(
                                 "Simulation. Non-tree NE found. State Id: {}".format(initial_state.get_id))
                             break
+                        else:
+                            continue
 
         return initial_state
 

@@ -20,8 +20,8 @@ n_ = (np.ceil(np.logspace(np.log10(10), np.log10(100), 10) / 2)*2).astype(int)
 
 for n in n_:
     alphas = np.hstack([n, 
-                    np.logspace(np.log10(n), np.log10(2*n), 5, dtype=float)[1:], 
-                    np.logspace(np.log10(n), np.log10(n/2), 5, dtype=float)[1:]])
+                    np.logspace(np.log10(n), np.log10(2*n), 10, dtype=float)[1:3], 
+                    np.logspace(np.log10(n), np.log10(n/2), 10, dtype=float)[1:3]])
     for _ in np.arange(n):
         # Logging config
         format = "%(asctime)s: %(message)s"
@@ -72,7 +72,7 @@ for n in n_:
                 logging.info("MCTS iteration: {}/{}".format(_+1, MAX_LOOPS))
 
                 # Check number of NE found so far and break execution if necessary
-                if len(mcts.ne) > mcts.tree.get_out_neighbors(state_0.get_id)/2:
+                if len(mcts.ne) > mcts.tree.get_out_neighbors(state_0.get_id)**2:
                     logging.info("MCTS: number of NE found ({}) exceeded.".format(len(mcts.ne)))
                     break
                 
@@ -101,10 +101,8 @@ for n in n_:
 
             # Housekeeping
             from pathlib import Path
-            from datetime import date
             src = Path()
-            dir = Path('mcts_biconnected_ring_' + str(ll)+ '_' +
-                    date.today().strftime("%Y%m%d"))
+            dir = Path('mcts_biconnected_ring_' + str(ll))
             dir.mkdir(parents=True, exist_ok=True)
             for file in src.glob("*.pkl"):
                 file.replace(dir / file.name)
