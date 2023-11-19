@@ -5,7 +5,7 @@ import numpy as np
 class State():
     parent_id: int
     _id: int
-    mean_value: int
+    mean_value: float
     visits: int
     is_terminal: bool
 
@@ -36,17 +36,20 @@ class State():
         """Sets scores (n-tuple indexed by agent)."""
         self._scores = val
 
-    def set_mean_value(self, val: int):
+    def set_mean_value(self, val: float):
         """Sets mean value."""
         self.mean_value = val
 
     @property
-    def get_mean_value(self) -> int:
+    def get_mean_value(self) -> float:
         """Returns mean value."""
         return self.mean_value
 
-    def update_mean_value(self, val: int):
-        self.mean_value = np.max([val, self.mean_value])
+    def update_mean_value(self, val: float, max=False):
+        if max:
+            self.mean_value = np.max([val, self.mean_value])
+        else:
+            self.mean_value = val
 
     @property
     def get_parent_id(self) -> int:

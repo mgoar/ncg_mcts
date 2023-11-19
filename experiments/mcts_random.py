@@ -21,9 +21,10 @@ sparse = False
 regular = False
 
 for n in n_:
-    alphas = np.hstack([n, 
-                    np.logspace(np.log10(n), np.log10(2*n), 10, dtype=float)[1:3], 
-                    np.logspace(np.log10(n), np.log10(n/2), 10, dtype=float)[1:3]])
+    alphas = np.hstack([n,
+                        np.logspace(np.log10(n), np.log10(
+                            2*n), 10, dtype=float)[1:3],
+                        np.logspace(np.log10(n), np.log10(n/2), 10, dtype=float)[1:3]])
     for _ in np.arange(n):
         # Logging config
         format = "%(asctime)s: %(message)s"
@@ -47,7 +48,8 @@ for n in n_:
                 # Create arbitrary ownership
                 m = np.triu(adj.todense())
                 es = np.nonzero(m)
-                ug = gt.Graph(np.array([es[0], es[1], m[es]]).T, directed=False)
+                ug = gt.Graph(
+                    np.array([es[0], es[1], m[es]]).T, directed=False)
 
                 graph = Network.Network(gt.spectral.adjacency(ug).todense(), n)
                 dg = copy.deepcopy(ug)
@@ -77,11 +79,13 @@ for n in n_:
 
                 # MCTS loop
                 for _ in np.arange(MAX_LOOPS):
-                    logging.info("MCTS iteration: {}/{}".format(_+1, MAX_LOOPS))
+                    logging.info(
+                        "MCTS iteration: {}/{}".format(_+1, MAX_LOOPS))
 
                     # Check number of NE found so far and break execution if necessary
                     if len(mcts.ne) > len(mcts.tree.get_out_neighbors(state_0.get_id))**2:
-                        logging.info("MCTS: number of NE found ({}) exceeded.".format(len(mcts.ne)))
+                        logging.info(
+                            "MCTS: number of NE found ({}) exceeded.".format(len(mcts.ne)))
                         break
 
                     # Save MCTS tree
@@ -105,7 +109,7 @@ for n in n_:
                     states = [mcts.s0_prop[v] for v in mcts.tree.get_vertices()]
                     for this in states:
                         logging.info("State Id: {} (parent: {}, terminal: {}). Scores/mean val/visits count: {}/{}/{}".format(this.get_id, this.get_parent_id, this.is_terminal,
-                                                                                                                            this.get_scores, np.round(this.get_mean_value,2), this.get_visits))
+                                                                                                                              this.get_scores, np.round(this.get_mean_value, 3), this.get_visits))
 
                 # Housekeeping
                 from pathlib import Path

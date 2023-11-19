@@ -13,10 +13,12 @@ import utils
 MAX_DEPTH = 10**5
 
 INIT_BRANCHING = 10**4
-EXPANSION_BRANCHING = 10
+EXPANSION_BRANCHING = 10**2
 INIT_DEPTH = 2
 
 C = 1
+
+DISCOUNT_FACTOR = 0.8
 
 
 class MCTS(object):
@@ -153,8 +155,9 @@ class MCTS(object):
 
             if len(self.tree.get_out_neighbors(state.get_id)) > 0:
                 child = self.tree.get_out_neighbors(state.get_id)
-                mean_values = [n.get_mean_value for n in child]
-                state = self.s0_prop[self.tree.get_out_neighbors(state.get_id)[np.argmax(mean_values)[0]]]
+                mean_values = [self.s0_prop[n].get_mean_value for n in child]
+                kk = np.argmax(mean_values)
+                state = self.s0_prop[self.tree.get_out_neighbors(state.get_id)[kk]]
 
                 state.incr_visits()
 
@@ -177,7 +180,7 @@ class MCTS(object):
                 s = self._apply_default_policy(state, "random_drawn")
 
                 logging.info(
-                    "Simulation. State mean value/Scores: {}/{}".format(np.round(s.get_mean_value,2), s.get_scores))
+                    "Simulation. State mean value/Scores: {}/{}".format(np.round(s.get_mean_value,3), s.get_scores))
 
                 return s
             else:
@@ -186,7 +189,7 @@ class MCTS(object):
             logging.error("Simulation. No available states. Exiting")
             pass
 
-    def _apply_default_policy(self, initial_state: State.State, heuristic="random_drawn") -> State.State:
+    def _apply_default_policy(self, initial_state: State.State, heuristic="random_drawn", discount=True) -> State.State:
         if heuristic == "random_drawn":
             # Playout of individuals randomly drawn
             n = len(initial_state.NCG.agents)
@@ -215,12 +218,14 @@ class MCTS(object):
                     # Save NE
                     if initial_state.is_terminal:
                         self.ne.append(initial_state)
-                        if not utils._is_tree(initial_state):
-                            logging.info(
-                                "Simulation. Non-tree NE found. State Id: {}".format(initial_state.get_id))
-                            break
-                        else:
-                            continue
+                        break
+        
+        if discount:
+            reward = initial_state.get_mean_value
+            if not utils._is_tree(initial_state):
+                logging.info("Simulation. Non-tree NE found. State Id: {}".format(initial_state.get_id))
+            else:
+                initial_state.set_mean_value(pow(self._get_discount_factor(), len(self._find_backtrace(initial_state))) * reward)
 
         return initial_state
 
@@ -268,7 +273,7 @@ class MCTS(object):
         self.s0_prop[v] = child
 
         # Set to terminal if value equals number of agents (NE)
-        if child.get_mean_value == len(child.NCG.agents):
+        if child.get_mean_value == 1.0:
             child.set_terminal()
 
         self.tree.add_edge(s.get_id, v)
@@ -292,7 +297,7 @@ class MCTS(object):
             if not self._exists_better_response(a, actions, node):
                 value += 1
 
-        node.set_mean_value(value)
+        node.set_mean_value(value/node.NCG.n)
 
     def _update_scores(self, state):
         state.NCG._set_costs()
@@ -354,3 +359,6 @@ class MCTS(object):
     def _return_max_child(self, s) -> State.State:
 
         return self._recursive_dfs_mean_value(s)
+    
+    def _get_discount_factor(self) -> float:
+        return DISCOUNT_FACTOR
