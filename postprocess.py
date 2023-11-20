@@ -4,13 +4,15 @@ import graph_tool as gt
 import matplotlib.pyplot as plt
 import networkx as nx
 
-with open('mcts_random_10_10.00_0_temp.pkl', 'rb') as file:
+with open('results/_INCOMPLETE_/mcts_random_10_10.00_0_temp.pkl', 'rb') as file:
     mcts = pickle.load(file)
 
 tree = nx.Graph(gt.spectral.adjacency(mcts.tree))
 pos = nx.nx_agraph.graphviz_layout(tree, prog="dot")
 nx.draw(tree, pos, node_size=2)
 plt.show()
+
+print("NE found: {}".format(len(mcts.ne)))
 
 terminal_nodes = []
 for node in mcts.ne:

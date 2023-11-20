@@ -22,8 +22,7 @@ regular = False
 
 for n in n_:
     alphas = np.hstack([n,
-                        np.logspace(np.log10(n), np.log10(
-                            2*n), 10, dtype=float)[1:3],
+                        np.logspace(np.log10(n), np.log10(2*n), 10, dtype=float)[1:3],
                         np.logspace(np.log10(n), np.log10(n/2), 10, dtype=float)[1:3]])
     for _ in np.arange(n):
         # Logging config
@@ -83,7 +82,7 @@ for n in n_:
                         "MCTS iteration: {}/{}".format(_+1, MAX_LOOPS))
 
                     # Check number of NE found so far and break execution if necessary
-                    if len(mcts.ne) > len(mcts.tree.get_out_neighbors(state_0.get_id))**2:
+                    if (len(mcts.ne) > len(mcts.tree.get_out_neighbors(state_0.get_id))**2) or (len(mcts.ne) > MAX_LOOPS/2):
                         logging.info(
                             "MCTS: number of NE found ({}) exceeded.".format(len(mcts.ne)))
                         break

@@ -17,7 +17,7 @@ def _create_d_regular_random_graph(order, d):
 def p_erdos_renyi(n, mode):
     if mode == "components":
         # Sharp threshold: ln(n)/n
-        eps = 1/2
+        eps = 1/5
         return np.random.uniform(low=np.log(n)/n,
                                  high=(1+eps)*np.log(n)/n)
     elif mode == "connectivity":
