@@ -113,7 +113,7 @@ class NCG():
         return agent.cost > cost, cost
 
     def _legal_actions(self, agent) -> List:
-        return list(chain.from_iterable(combinations(list(np.delete(np.arange(self.n), agent._id)), r) for r in range(len(list(np.arange(self.n)))+1)))
+        return chain.from_iterable(combinations(list(np.delete(np.arange(self.n), agent._id)), r) for r in range(len(list(np.arange(self.n)))+1))
 
     def _legal_k_length_actions(self, agent, k) -> List:
         return [action for action in self._legal_actions(agent) if len(action) <= k and action != agent.strategy]

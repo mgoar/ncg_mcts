@@ -10,9 +10,9 @@ import Agent
 import State
 import utils
 
-MAX_DEPTH = 10**5
+MAX_DEPTH = 10**4
 
-INIT_BRANCHING = 10**4
+INIT_BRANCHING = 10**2
 EXPANSION_BRANCHING = 10**2
 INIT_DEPTH = 2
 
@@ -39,7 +39,7 @@ class MCTS(object):
         self._set_value(s0)
 
         # Set to terminal if value equals number of agents (NE)
-        if s0.get_mean_value == len(s0.NCG.agents):
+        if s0.get_mean_value == 1.0:
             s0.set_terminal()
 
         # List of NE
@@ -146,7 +146,7 @@ class MCTS(object):
         if (state.get_parent_id == 0) and (state.get_visits == 1):
             # Perform simulation. Skip
             # Set to terminal if value equals number of agents (NE)
-            if state.get_mean_value == len(state.NCG.agents):
+            if state.get_mean_value == 1.0:
                 state.set_terminal()
 
         else:
@@ -162,7 +162,7 @@ class MCTS(object):
                 state.incr_visits()
 
                 # Set to terminal if value equals number of agents (NE)
-                if state.get_mean_value == len(state.NCG.agents):
+                if state.get_mean_value == 1.0:
                     state.set_terminal()
 
             else:
