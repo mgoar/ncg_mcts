@@ -1,8 +1,12 @@
 from graph_tool.all import *
 import graph_tool as gt
+import copy
+import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
-import copy
+import pickle
+
+import Network
 
 
 def _is_tree(node):
@@ -17,9 +21,9 @@ def _create_d_regular_random_graph(order, d):
 def p_erdos_renyi(n, mode):
     if mode == "components":
         # Sharp threshold: ln(n)/n
-        eps = 1/5
-        return np.random.uniform(low=np.log(n)/n,
-                                 high=(1+eps)*np.log(n)/n)
+        eps = 1/4
+        return np.random.uniform(low=(1+eps)*np.log(n)/n,
+                                 high=2*np.log(n)/n)
     elif mode == "connectivity":
         eps = 1/n
         return np.random.uniform(low=1/n,
@@ -197,3 +201,67 @@ def _edge_percolation(dg, edges):
 
 def _get_index_from_vertex(g, vertex):
     return g.vertex_index[vertex]
+
+
+def _create_graph(adj, n):
+
+    # Create arbitrary ownership
+    m = np.triu(adj.todense())
+    es = np.nonzero(m)
+    ug = gt.Graph(
+        np.array([es[0], es[1], m[es]]).T, directed=False)
+
+    graph = Network.Network(gt.spectral.adjacency(ug).todense(), n)
+    dg = copy.deepcopy(ug)
+    dg.set_directed(True)
+    graph.set_ownership(dg)
+
+    return graph
+
+
+def _generate_graph_collection():
+
+    collection = []
+
+    # G(n,p) random graph. Orders
+    n_ = np.arange(10, 16, dtype=int)
+    for n in n_:
+        adj, _ = _create_random_graph(n, False)
+        collection.append(_create_graph(adj, n))
+
+    # Regular random graph
+    n = 10
+    d_ = np.array([3, 4])
+    for d in d_:
+        adj = _create_d_regular_random_graph(n, d)
+        collection.append(_create_graph(adj, n))
+
+    # Random dense small graphs
+    n_ = np.arange(5, 9, dtype=int)
+
+    for n in n_:
+        adj, _ = _create_random_graph(n, False)
+        collection.append(_create_graph(adj, n))
+
+    return collection
+
+
+def _plot_collection():
+
+    collection = _generate_graph_collection()
+
+    # Save to pickle
+    with open('collection.pkl', 'wb') as f:
+        pickle.dump(collection, f)
+
+    plt.switch_backend("cairo")
+
+    rows = 2
+
+    fig, ax = plt.subplots(rows, int(len(collection)/rows))
+    for i, this_ax in enumerate(ax.reshape(-1)):
+        this_ax.axis("off")
+        gt.draw.graph_draw(collection[i].ownership,
+                           mplfig=this_ax)
+
+    fig.savefig("collection.pdf")
