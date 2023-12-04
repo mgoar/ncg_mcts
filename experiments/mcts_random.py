@@ -97,7 +97,7 @@ for this_exp in exp:
 
         # Housekeeping
         src = Path()
-        dir = Path('mcts_'+id)
+        dir = Path('mcts_'+id+'_k_'+str(k))
         dir.mkdir(parents=True, exist_ok=True)
         for file in src.glob("temp.pkl"):
             file.replace(dir / file.name)
