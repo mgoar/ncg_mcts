@@ -33,7 +33,7 @@ for this_exp in exp:
     if this_exp['greedy']:
         k_ = this_exp['k']
     else:
-        k_ = n
+        k_ = [n]
 
     # Iterate over k
     for k in k_:

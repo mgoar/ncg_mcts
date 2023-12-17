@@ -222,9 +222,7 @@ class MCTS(object):
         
         if discount:
             reward = initial_state.get_mean_value
-            if not utils._is_tree(initial_state):
-                logging.info("Simulation. Non-tree NE found. State Id: {}".format(initial_state.get_id))
-            else:
+            if initial_state.is_terminal and utils._is_tree(initial_state):
                 initial_state.set_mean_value(pow(self._get_discount_factor(), len(self._find_backtrace(initial_state))) * reward)
 
         return initial_state
