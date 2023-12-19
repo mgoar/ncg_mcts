@@ -1,84 +1,84 @@
-- exp_0:
-  id: "random-dense-0"
-  index:  !!int 0
-  n:      !!int 10
-  alpha:  10
-  greedy: !!bool True
-  k:      [1, 2, 3]
-- exp_1:
-  id: "random-dense-1"
-  index:  !!int 1
-  n:      !!int 11
-  alpha:  11
-  greedy: !!bool True
-  k:      [1, 2, 3]
-- exp_2:
-  id: "random-dense-2"
-  index:  !!int 2
-  n:      !!int 12
-  alpha:  12
-  greedy: !!bool True
-  k:      [1, 2, 3]
-- exp_3:
-  id: "random-dense-3"
-  index:  !!int 3
-  n:      !!int 13
-  alpha:  13
-  greedy: !!bool True
-  k:      [1, 2, 3]
-- exp_4:
-  id: "random-dense-4"
-  index:  !!int 4
-  n:      !!int 14
-  alpha:  14
-  greedy: !!bool True
-  k:      [1, 2, 3]
-- exp_5:
-  id: "random-dense-5"
-  index:  !!int 5
-  n:      !!int 15
-  alpha:  15
-  greedy: !!bool True
-  k:      [1, 2, 3]
-- exp_6:
-  id: "random-regular-3"
-  index:  !!int 6
-  n:      !!int 10
-  alpha:  10
-  greedy: !!bool True
-  k:      [1, 2, 3]
-- exp_7:
-  id: "random-regular-4"
-  index:  !!int 7
-  n:      !!int 10
-  alpha:  10
-  greedy: !!bool True
-  k:      [1, 2, 3]
-- exp_8:
-  id: "random-small-5"
-  index:  !!int 8
-  n:      !!int 5
-  alpha:  5
-  greedy: !!bool False
-  k:      []
-- exp_9:
-  id: "random-small-6"
-  index:  !!int 9
-  n:      !!int 6
-  alpha:  6
-  greedy: !!bool False
-  k:      []
-- exp_10:
-  id: "random-small-7"
-  index:  !!int 10
-  n:      !!int 7
-  alpha:  7
-  greedy: !!bool False
-  k:      []
-- exp_11:
-  id: "random-small-8"
-  index:  !!int 11
-  n:      !!int 8
-  alpha:  8
-  greedy: !!bool False
-  k:      []
+#- exp_0:
+#  id: "random-dense-0"
+#  index:  !!int 0
+#  n:      !!int 10
+#  alpha:  10
+#  greedy: !!bool True
+#  k:      [1, 2, 3]
+#- exp_1:
+#  id: "random-dense-1"
+#  index:  !!int 1
+#  n:      !!int 11
+#  alpha:  11
+#  greedy: !!bool True
+#  k:      [1, 2, 3]
+#- exp_2:
+#  id: "random-dense-2"
+#  index:  !!int 2
+#  n:      !!int 12
+#  alpha:  12
+#  greedy: !!bool True
+#  k:      [1, 2, 3]
+#- exp_3:
+#  id: "random-dense-3"
+#  index:  !!int 3
+#  n:      !!int 13
+#  alpha:  13
+#  greedy: !!bool True
+#  k:      [1, 2]
+#- exp_4:
+#  id: "random-dense-4"
+#  index:  !!int 4
+#  n:      !!int 14
+#  alpha:  14
+#  greedy: !!bool True
+#  k:      [1, 2]
+#- exp_5:
+#  id: "random-dense-5"
+#  index:  !!int 5
+#  n:      !!int 15
+#  alpha:  15
+#  greedy: !!bool True
+#  k:      [1, 2]
+#- exp_6:
+#  id: "random-regular-3"
+#  index:  !!int 6
+#  n:      !!int 10
+#  alpha:  10
+#  greedy: !!bool True
+#  k:      [1, 2, 3]
+#- exp_7:
+##  id: "random-regular-4"
+#  index:  !!int 7
+#  n:      !!int 10
+#  alpha:  10
+#  greedy: !!bool True
+#  k:      [1, 2, 3]
+#- exp_8:
+#  id: "random-small-5"
+#  index:  !!int 8
+#  n:      !!int 5
+#  alpha:  5
+#  greedy: !!bool False
+#  k:      []
+#- exp_9:
+#  id: "random-small-6"
+#  index:  !!int 9
+#  n:      !!int 6
+#  alpha:  6
+#  greedy: !!bool False
+#  k:      []
+#- exp_10:
+#  id: "random-small-7"
+#  index:  !!int 10
+#  n:      !!int 7
+#  alpha:  7
+#  greedy: !!bool False
+#  k:      []
+#- exp_11:
+#  id: "random-small-8"
+#  index:  !!int 11
+#  n:      !!int 8
+#  alpha:  8
+#  greedy: !!bool False
+#  k:      []
