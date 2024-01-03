@@ -4,8 +4,11 @@ import graph_tool as gt
 import matplotlib.pyplot as plt
 import networkx as nx
 
-case = 'mcts_random-dense-0_k_2'
-with open('temp.pkl', 'rb') as file:
+EVAL = False
+PLOT = False
+
+case = 'mcts_random-small-8_k_8'
+with open('alpha_right_n/'+case+'/alpha_32/temp.pkl', 'rb') as file:
     mcts = pickle.load(file)
 
 tree = nx.Graph(gt.spectral.adjacency(mcts.tree))
@@ -16,6 +19,13 @@ plt.show()
 
 terminal_nodes = []
 nontrees = []
+
+# Append terminal tree nodes to NE
+v = list(mcts.s0_prop)
+for this_v in v:
+    if this_v.is_terminal:
+        mcts.ne.append(this_v)
+
 for node in mcts.ne:
     if node.is_terminal:
         terminal_nodes.append(node)
@@ -27,35 +37,43 @@ for node in mcts.ne:
         if not nx.is_tree(g):
             print("NE non-tree.")
             nontrees.append(node.NCG.network)
-            nx.draw(g)
-            plt.show()
+            if PLOT:
+                nx.draw(g)
+                plt.show()
 
             # Double-check it is NE
-            for a in node.NCG.agents:
-                # List all legal actions
-                actions = node.NCG._legal_k_length_actions(a, mcts.k)
-                if mcts._exists_better_response(a, actions, node):
-                    print("BR found.")
-                else:
-                    print("No BR found.")     
+            if EVAL:
+                for a in node.NCG.agents:
+                    # List all legal actions
+                    actions = node.NCG._legal_k_length_actions(a, mcts.k)
+                    if mcts._exists_better_response(a, actions, node):
+                        print("BR found.")
+                    else:
+                        print("No BR found.")
 
         else:
             print("NE tree.")
 
 # Plot all non-tree NE
-rows = 2
+rows = 1
 
 plt.switch_backend("cairo")
 
-if(len(nontrees) != 0):
-    fig, ax = plt.subplots(rows, int(len(nontrees)/rows))
-    for i, this_ax in enumerate(ax.reshape(-1)):
-        this_ax.axis("off")
-        gt.draw.graph_draw(nontrees[i].ownership,
-                            mplfig=this_ax)
+if (len(nontrees) != 0):
+    if len(nontrees) == 1:
+        fig, ax = plt.subplots(1, 1)
+        ax.axis("off")
+        gt.draw.graph_draw(nontrees[0].ownership, mplfig=ax)
+        fig.savefig(case+"-non_trees.pdf")
+    else:
+        fig, ax = plt.subplots(rows, int(len(nontrees)/rows))
+        for i, this_ax in enumerate(ax.reshape(-1)):
+            this_ax.axis("off")
+            gt.draw.graph_draw(nontrees[i].ownership,
+                               mplfig=this_ax)
 
-    fig.savefig(case+"-non_trees.pdf")
+        fig.savefig(case+"-non_trees.pdf")
 
-    max = mcts._return_max_child(mcts.s0_prop[0])
-    print("Max child. State Id: {}/{}/{}/{}".format(max.get_id,
-                                                    max.get_scores, max.get_visits, max.get_mean_value))
+max = mcts._return_max_child(mcts.s0_prop[0])
+print("Max child. State Id: {}/{}/{}/{}".format(max.get_id,
+                                                max.get_scores, max.get_visits, max.get_mean_value))
